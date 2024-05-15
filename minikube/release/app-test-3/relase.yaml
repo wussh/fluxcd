@@ -21,7 +21,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: athens/athens-proxy
+      chart: athens-proxy
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
