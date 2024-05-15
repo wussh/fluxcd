@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-test-2
+  labels:
+    app: app-test-2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-test-2
+  template:
+    metadata:
+      labels:
+        app: app-test-2
+    spec:
+      containers:
+      - name: app-test-2
+        image: httpd:latest
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-test-2
+  labels:
+    app: app-test-2
+spec:
+  selector:
+    app: app-test-2
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-test-2-config
+data:
+  config-key: config-value
