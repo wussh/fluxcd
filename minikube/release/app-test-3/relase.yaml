@@ -1,0 +1,214 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: athens-proxy
+
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: athens-proxy
+  namespace: athens-proxy
+spec:
+  interval: 24h
+  url: https://gomods.github.io/athens-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: athens-proxy
+  namespace: athens-proxy
+spec:
+  chart:
+    spec:
+      chart: athens/athens-proxy
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: athens-proxy
+      version: 0.11.0
+  interval: 24h
+  releaseName: athens-proxy
+  timeout: 15m
+  values:
+    replicaCount: 1
+    image:
+      registry: docker.io
+      repository: gomods/athens
+      tag: v0.14.0
+      pullPolicy: IfNotPresent
+      ## Specify secrets containing credentials for pulling images
+      # pullSecrets: []
+      #  - name: name-of-secret
+      ## Determine if the image should run as root or user `athens`
+      runAsNonRoot: false
+    livenessProbe:
+      failureThreshold: 3
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    strategy:
+      type: Recreate
+    service:
+      ## Additional annotations to apply to the service
+      annotations: {}
+      ## Port as exposed by the service
+      servicePort: 80
+      ## Type of service; valid values are "ClusterIP", "LoadBalancer", and
+      ## "NodePort". "ClusterIP" is sufficient in the case when the Proxy will be used
+      ## from within the cluster. To expose externally, consider a "NodePort" or "LoadBalancer" service.
+      type: ClusterIP
+      ## Further configuration if service is of type "NodePort"
+      # nodePort:
+        ## Available port in allowable range (e.g. 30000 - 32767 on minikube)
+        # port: 30080
+    ingress:
+      enabled: false
+      className: kong-internal
+      hosts:
+        - host: athens.dev.internal
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+    storage:
+      type: disk
+      disk:
+        storageRoot: "/var/lib/athens"
+        persistence:
+          ## Note if you use disk.persistence.enabled, replicaCount should be set to 1 unless your access mode is ReadWriteMany
+          ## and strategy type must be Recreate
+          enabled: true
+          accessMode: ReadWriteOnce
+          size: 10Gi
+      # mongo:
+      #   url: ""
+      # s3:
+        # you must set s3 bucket and region when running 'helm install'
+      #   region: ""
+      #   bucket: ""
+      #   useDefaultConfiguration: false
+      #   forcePathStyle: false
+      #   accessKey: ""
+      #   secretKey: ""
+      #   sessionToken: ""
+      # minio:
+        # All these variables needs to be set when configuring athens to run with minio backend
+        # endpoint: ""
+        # accessKey: ""
+        # secretKey: ""
+        # bucket: ""
+      # gcp:
+        # For more information, see:
+        # https://docs.gomods.io/install/install-on-kubernetes/#google-cloud-storage
+        # you must set gcp projectID and bucket when running 'helm install'
+        # projectID: ""
+        # bucket: ""
+        # set serviceAccount to a key which has read/write access to the GCS bucket.
+        # If you are running Athens inside GCP, you will most likely not need this
+        # as GCP figures out internal authentication between products for you.
+        # serviceAccount: ""
+
+    ## Priority class for pod scheduling (see API reference: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
+    # priorityClassName: ""
+    # Container security context configuration (see API reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#securitycontext-v1-core)
+    # This will override the `image.runAsNonRoot` settings in the specified container if `runAsUser` or `runAsGroup` are set
+    # securityContext:
+    #   {}
+      # allowPrivilegeEscalation: false
+      # runAsNonRoot: true
+    # initContainerSecurityContext:
+    #   {}
+      # allowPrivilegeEscalation: false
+      # runAsNonRoot: true
+    # Extra environment variables to be passed
+    # You can add any new ones at the bottom
+    # configEnvVars: {}
+    # Extra annotations to be added to the athens pods
+    # annotations: {}
+    # Extra labels to be added to all resources
+    # extraLabels: {}
+    # HTTP basic auth
+    basicAuth:
+      enabled: false
+      # secretName: athens-proxy-basic-auth
+      # passwordSecretKey: password
+      # usernameSecretKey: username
+    netrc:
+      # if enabled, it expects to find the content of a valid .netrc file imported as a secret named netrcsecret
+      enabled: false
+      # existingSecret: netrcsecret
+    # gitconfig section provides a way to inject git config file to make athens able to fetch modules from private git repos.
+    gitconfig:
+      # By default, gitconfig is disabled.
+      enabled: false
+      # Name of the kubernetes secret (in the same namespace as athens-proxy) that contains git config.
+      # secretName: athens-proxy-gitconfig
+      # Key in the kubernetes secret that contains git config data.
+      # secretKey: gitconfig
+    upstreamProxy:
+      enabled: false
+    sshGitServers:
+      # {}
+      ## Private git servers over ssh
+      ## to enable uncomment lines with single hash below
+      ## hostname of the git server
+      # - host: git.example.com
+      ## https path, "/scm" for bitbucket
+      #   path: ""
+      ## ssh username
+      #   user: git
+      ## ssh private key for the user
+      #   privateKey: |
+      #     -----BEGIN RSA PRIVATE KEY-----
+      #     -----END RSA PRIVATE KEY-----
+      ## ssh port
+      #   port: 22
+      ## ssh private key from the existing secret (to be added separately in "Secret" Resource)
+      #   existingSecret:
+      #     name: ssh-keys
+      #     subPath: secret.id_rsa
+    goGetWorkers: 3
+    metrics:
+      # create ServiceMonitor for prometheus
+      serviceMonitor:
+        enabled: false
+        # namespace: "monitoring"
+        # labels:
+        #   prometheus: default
+    # create VMServiceScrape for victoria
+    serviceScrape:
+      enabled: false
+      # namespace: "monitoring"
+    serviceAccount:
+      create: true
+      annotations:
+        name: "athens-proxy"
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    resources: {}
+    intiContainerResources: {}
+    autoscaling:
+      # enable Horizontal Pod Autoscaling
+      enabled: false
+      # minReplicas: 1
+      # maxReplicas: 3
+      # targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
+      # apiVersionOverride: ""
+      # This is only available on HPA apiVersion `autoscaling/v2beta2` and newer
+      # behavior:
+        # {}
+        # scaleDown:
+        #  stabilizationWindowSeconds: 300
+        #  policies:
+        #   - type: Pods
+        #     value: 1
+        #     periodSeconds: 180
+        # scaleUp:
+        #   stabilizationWindowSeconds: 300
+        #   policies:
+        #   - type: Pods
+        #     value: 2
+        #     periodSeconds: 60
+
