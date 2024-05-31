@@ -1,100 +1,100 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: siglens
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: siglens
 
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: siglens
-  namespace: siglens
-spec:
-  interval: 24h
-  url: https://siglens.github.io/charts
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
-kind: HelmRelease
-metadata:
-  name: siglens
-  namespace: siglens
-spec:
-  chart:
-    spec:
-      chart: siglens
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: HelmRepository
-        name: siglens
-      version: 0.1.3
-  interval: 24h
-  releaseName: siglens
-  timeout: 15m
-  values:
-    affinity: {}
-    fullnameOverride: ""
-    imagePullSecrets: []
-    k8sExporter:
-      configs:
-        index: kubernetes-events
-      enabled: true
-      image:
-        pullPolicy: IfNotPresent
-        repository: ghcr.io/opsgenie/kubernetes-event-exporter
-        tag: v0.11
-    logsExporter:
-      enabled: true
-      image:
-        pullPolicy: IfNotPresent
-        repository: fluent/fluentd-kubernetes-daemonset
-        tag: v1.14-debian-elasticsearch7-1
-    nameOverride: ""
-    nodeSelector: {}
-    otelCollector:
-      enabled: true
-      image:
-        pullPolicy: IfNotPresent
-        repository: otel/opentelemetry-collector
-        tag: latest
-    podAnnotations: {}
-    podSecurityContext:
-      fsGroup: 1000
-    resources: {}
-    securityContext:
-      capabilities:
-        drop:
-        - ALL
-      runAsUser: 1000
-    serviceAccount:
-      annotations: {}
-      name: ""
-    siglens:
-      configs:
-        ingestNode: true
-        ingestPort: 8081
-        metricsPort: 2222
-        queryNode: true
-        queryPort: 5122
-      image:
-        pullPolicy: Always
-        repository: siglens/siglens
-        tag: latest
-      ingest:
-        service:
-          annotations: {}
-          port: 8081
-          serviceType: ClusterIP
-      otel:
-        service:
-          annotations: {}
-          port: 4318
-          serviceType: ClusterIP
-      query:
-        service:
-          annotations: {}
-          port: 5122
-          serviceType: ClusterIP
-      storage:
-        defaultClass: true
-        size: 1Gi
-    tolerations: []
+# ---
+# apiVersion: source.toolkit.fluxcd.io/v1beta2
+# kind: HelmRepository
+# metadata:
+#   name: siglens
+#   namespace: siglens
+# spec:
+#   interval: 24h
+#   url: https://siglens.github.io/charts
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# kind: HelmRelease
+# metadata:
+#   name: siglens
+#   namespace: siglens
+# spec:
+#   chart:
+#     spec:
+#       chart: siglens
+#       reconcileStrategy: ChartVersion
+#       sourceRef:
+#         kind: HelmRepository
+#         name: siglens
+#       version: 0.1.3
+#   interval: 24h
+#   releaseName: siglens
+#   timeout: 15m
+#   values:
+#     affinity: {}
+#     fullnameOverride: ""
+#     imagePullSecrets: []
+#     k8sExporter:
+#       configs:
+#         index: kubernetes-events
+#       enabled: true
+#       image:
+#         pullPolicy: IfNotPresent
+#         repository: ghcr.io/opsgenie/kubernetes-event-exporter
+#         tag: v0.11
+#     logsExporter:
+#       enabled: true
+#       image:
+#         pullPolicy: IfNotPresent
+#         repository: fluent/fluentd-kubernetes-daemonset
+#         tag: v1.14-debian-elasticsearch7-1
+#     nameOverride: ""
+#     nodeSelector: {}
+#     otelCollector:
+#       enabled: true
+#       image:
+#         pullPolicy: IfNotPresent
+#         repository: otel/opentelemetry-collector
+#         tag: latest
+#     podAnnotations: {}
+#     podSecurityContext:
+#       fsGroup: 1000
+#     resources: {}
+#     securityContext:
+#       capabilities:
+#         drop:
+#         - ALL
+#       runAsUser: 1000
+#     serviceAccount:
+#       annotations: {}
+#       name: ""
+#     siglens:
+#       configs:
+#         ingestNode: true
+#         ingestPort: 8081
+#         metricsPort: 2222
+#         queryNode: true
+#         queryPort: 5122
+#       image:
+#         pullPolicy: Always
+#         repository: siglens/siglens
+#         tag: latest
+#       ingest:
+#         service:
+#           annotations: {}
+#           port: 8081
+#           serviceType: ClusterIP
+#       otel:
+#         service:
+#           annotations: {}
+#           port: 4318
+#           serviceType: ClusterIP
+#       query:
+#         service:
+#           annotations: {}
+#           port: 5122
+#           serviceType: ClusterIP
+#       storage:
+#         defaultClass: true
+#         size: 1Gi
+#     tolerations: []
