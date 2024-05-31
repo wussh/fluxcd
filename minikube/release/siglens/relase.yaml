@@ -52,7 +52,6 @@ spec:
         annotations: {}
 
     configs:
-      queryPort: 5122  # port used for siglens ui webserver
       metricsPort: 2222
       queryNode: true
       ingestNode: true
