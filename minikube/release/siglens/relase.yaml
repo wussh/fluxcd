@@ -78,7 +78,7 @@ spec:
 
   logsExporter:
     # Logs Exporter launches a fluentd daemonset that tails all container logs at /var/log/containers/*.log
-    enabled: false
+    enabled: true
     image:
       repository: fluent/fluentd-kubernetes-daemonset
       pullPolicy: IfNotPresent
@@ -91,6 +91,10 @@ spec:
       repository: otel/opentelemetry-collector
       pullPolicy: IfNotPresent
       tag: latest
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
 
   serviceAccount:
     # Annotations to add to the service account
@@ -122,3 +126,9 @@ spec:
     requests:
       cpu: 100m
       memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
