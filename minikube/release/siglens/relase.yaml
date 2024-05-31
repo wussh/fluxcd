@@ -67,7 +67,6 @@ spec:
       size: 1Gi
 
   k8sExporter:
-    # Enable k8s events exporter to automatically ship events to siglens. If enabled, a cluster role will be created
     enabled: true
     image:
       repository: ghcr.io/opsgenie/kubernetes-event-exporter
@@ -76,8 +75,16 @@ spec:
     configs:
       index: kubernetes-events  # output index name for kubernetes events
 
+  logsExporter:
+    enabled: true
+    image:
+      repository: fluent/fluentd-kubernetes-daemonset
+      pullPolicy: IfNotPresent
+      tag: v1.14-debian-elasticsearch7-1
+    configs:
+      indexPrefix: logstash
+
   otelCollector:
-    # opentelemetry collector to collect internal metrics from siglens
     enabled: true
     image:
       repository: otel/opentelemetry-collector
@@ -89,10 +96,7 @@ spec:
   fullnameOverride: ""
 
   serviceAccount:
-    # Annotations to add to the service account
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
     name: ""
 
   podAnnotations: {}
@@ -107,10 +111,6 @@ spec:
     runAsUser: 1000
 
   resources:
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     limits:
       cpu: 100m
       memory: 128Mi
