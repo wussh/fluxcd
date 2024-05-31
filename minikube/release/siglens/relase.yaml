@@ -99,17 +99,6 @@ spec:
     annotations: {}
     name: ""
 
-  podAnnotations: {}
-
-  podSecurityContext:
-    fsGroup: 1000
-
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    runAsUser: 1000
-
   resources:
     limits:
       cpu: 100m
