@@ -63,7 +63,7 @@ spec:
       defaultClass: true
 
       # size of the volume the PVC will request
-      size: 10Gi
+      size: 1Gi
 
 
   k8sExporter:
@@ -78,7 +78,7 @@ spec:
 
   logsExporter:
     # Logs Exporter launches a fluentd daemonset that tails all container logs at /var/log/containers/*.log
-    enabled: true
+    enabled: false
     image:
       repository: fluent/fluentd-kubernetes-daemonset
       pullPolicy: IfNotPresent
