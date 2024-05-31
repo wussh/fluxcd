@@ -30,7 +30,7 @@ spec:
   interval: 24h
   releaseName: siglens
   timeout: 15m
-  values:
+  # values:
     # image:
     #   repository: siglens/siglens
     #   pullPolicy: Always
