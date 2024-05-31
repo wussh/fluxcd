@@ -35,6 +35,16 @@ spec:
       repository: siglens/siglens
       pullPolicy: Always
       tag: latest
+    ingest:
+      service:
+        serviceType: "ClusterIP"
+        port: 8081
+        annotations: {}
+    query:
+      service:
+        serviceType: "ClusterIP"
+        port: 5122
+        annotations: {}
     otel:
       service:
         serviceType: "ClusterIP"
