@@ -92,10 +92,6 @@ spec:
       pullPolicy: IfNotPresent
       tag: latest
 
-  imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
-
   serviceAccount:
     # Annotations to add to the service account
     annotations: {}
@@ -126,9 +122,3 @@ spec:
     requests:
       cpu: 100m
       memory: 128Mi
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
