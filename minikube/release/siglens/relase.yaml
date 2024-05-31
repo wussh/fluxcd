@@ -65,56 +65,56 @@ spec:
       # size of the volume the PVC will request
       size: 1Gi
 
+    k8sExporter:
+      # Enable k8s events exporter to automatically ship events to siglens. If enabled, a cluster role will be created
+      enabled: true
+      image:
+        repository: ghcr.io/opsgenie/kubernetes-event-exporter
+        pullPolicy: IfNotPresent
+        tag: v0.11
+      configs:
+        index: kubernetes-events  # output index name for kubernetes events
 
-  k8sExporter:
-    # Enable k8s events exporter to automatically ship events to siglens. If enabled, a cluster role will be created
-    enabled: true
-    image:
-      repository: ghcr.io/opsgenie/kubernetes-event-exporter
-      pullPolicy: IfNotPresent
-      tag: v0.11
-    configs:
-      index: kubernetes-events  # output index name for kubernetes events
+    logsExporter:
+      # Logs Exporter launches a fluentd daemonset that tails all container logs at /var/log/containers/*.log
+      enabled: true
+      image:
+        repository: fluent/fluentd-kubernetes-daemonset
+        pullPolicy: IfNotPresent
+        tag: v1.14-debian-elasticsearch7-1
 
-  logsExporter:
-    # Logs Exporter launches a fluentd daemonset that tails all container logs at /var/log/containers/*.log
-    enabled: true
-    image:
-      repository: fluent/fluentd-kubernetes-daemonset
-      pullPolicy: IfNotPresent
-      tag: v1.14-debian-elasticsearch7-1
+    otelCollector:
+      # opentelemetry collector to collect internal metrics from siglens
+      enabled: true
+      image:
+        repository: otel/opentelemetry-collector
+        pullPolicy: IfNotPresent
+        tag: latest
 
-  otelCollector:
-    # opentelemetry collector to collect internal metrics from siglens
-    enabled: true
-    image:
-      repository: otel/opentelemetry-collector
-      pullPolicy: IfNotPresent
-      tag: latest
+    serviceAccount:
+      # Annotations to add to the service account
+      annotations: {}
+      # The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
 
-  serviceAccount:
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    podSecurityContext:
+      fsGroup: 1000
 
-  podSecurityContext:
-    fsGroup: 1000
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsUser: 1000
 
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    runAsUser: 1000
-
-  resources:
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+    # Move resources configuration inside values if it should be applied to the Helm chart components
+    resources:
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
