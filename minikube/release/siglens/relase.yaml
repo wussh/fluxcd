@@ -51,11 +51,6 @@ spec:
         port: 4318
         annotations: {}
 
-    configs:
-      metricsPort: 2222
-      queryNode: true
-      ingestNode: true
-
     storage:
       # set to true for default class, else will create a new class with below arguments
       defaultClass: true
