@@ -30,71 +30,107 @@ spec:
   interval: 24h
   releaseName: siglens
   timeout: 15m
-#   values:
-#     affinity: {}
-#     fullnameOverride: ""
-#     imagePullSecrets: []
-#     k8sExporter:
-#       configs:
-#         index: kubernetes-events
-#       enabled: true
-#       image:
-#         pullPolicy: IfNotPresent
-#         repository: ghcr.io/opsgenie/kubernetes-event-exporter
-#         tag: v0.11
-#     logsExporter:
-#       enabled: true
-#       image:
-#         pullPolicy: IfNotPresent
-#         repository: fluent/fluentd-kubernetes-daemonset
-#         tag: v1.14-debian-elasticsearch7-1
-#     nameOverride: ""
-#     nodeSelector: {}
-#     otelCollector:
-#       enabled: true
-#       image:
-#         pullPolicy: IfNotPresent
-#         repository: otel/opentelemetry-collector
-#         tag: latest
-#     podAnnotations: {}
-#     podSecurityContext:
-#       fsGroup: 1000
-#     resources: {}
-#     securityContext:
-#       capabilities:
-#         drop:
-#         - ALL
-#       runAsUser: 1000
-#     serviceAccount:
-#       annotations: {}
-#       name: ""
-#     siglens:
-#       configs:
-#         ingestNode: true
-#         ingestPort: 8081
-#         metricsPort: 2222
-#         queryNode: true
-#         queryPort: 5122
-#       image:
-#         pullPolicy: Always
-#         repository: siglens/siglens
-#         tag: latest
-#       ingest:
-#         service:
-#           annotations: {}
-#           port: 8081
-#           serviceType: ClusterIP
-#       otel:
-#         service:
-#           annotations: {}
-#           port: 4318
-#           serviceType: ClusterIP
-#       query:
-#         service:
-#           annotations: {}
-#           port: 5122
-#           serviceType: ClusterIP
-#       storage:
-#         defaultClass: true
-#         size: 1Gi
-#     tolerations: []
+  values:
+    # Default values for siglens.
+    siglens:
+      image:
+        repository: siglens/siglens
+        pullPolicy: Always
+        tag: latest
+      ingest:
+        service:
+          serviceType: "ClusterIP"
+          port: 8081
+          annotations: {}
+      query:
+        service:
+          serviceType: "ClusterIP"
+          port: 5122
+          annotations: {}
+      otel:
+        service:
+          serviceType: "ClusterIP"
+          port: 4318
+          annotations: {}
+
+      configs:
+        ingestPort: 8081  # port used for siglens ingestion servers
+        queryPort: 5122  # port used for siglens ui webserver
+        metricsPort: 2222 
+        queryNode: true
+        ingestNode: true
+
+      storage:
+        # set to true for default class, else will create a new class with below arguments
+        defaultClass: true
+
+        # size of the volume the PVC will request
+        size: 1Gi
+
+
+    k8sExporter:
+      # Enable k8s events exporter to automatically ship events to siglens. If enabled, a cluster role will be created
+      enabled: true
+      image:
+        repository: ghcr.io/opsgenie/kubernetes-event-exporter
+        pullPolicy: IfNotPresent
+        tag: v0.11
+      configs:
+        index: kubernetes-events  # output index name for kubernetes events
+
+    logsExporter:
+      # Logs Exporter launches a fluentd daemonset that tails all container logs at /var/log/containers/*.log
+      enabled: true
+      image:
+        repository: fluent/fluentd-kubernetes-daemonset
+        pullPolicy: IfNotPresent
+        tag: v1.14-debian-elasticsearch7-1
+
+    otelCollector:
+      # opentelemetry collector to collect internal metrics from siglens
+      enabled: true
+      image:
+        repository: otel/opentelemetry-collector
+        pullPolicy: IfNotPresent
+        tag: latest
+
+    imagePullSecrets: []
+    nameOverride: ""
+    fullnameOverride: ""
+
+    serviceAccount:
+      # Annotations to add to the service account
+      annotations: {}
+      # The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: ""
+
+    podAnnotations: {}
+
+    podSecurityContext:
+      fsGroup: 1000
+
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      runAsUser: 1000
+
+
+    resources:
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      limits:
+        cpu: 150m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}
