@@ -32,5 +32,6 @@ spec:
   timeout: 15m
   values:
     persistence:
-      storageClass: gp2
+      enabled: true
+      accessMode: "ReadWriteOnce"
       size: "1Gi"
