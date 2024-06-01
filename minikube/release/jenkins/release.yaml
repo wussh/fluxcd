@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins-system
+
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: jenkins
+  namespace: jenkins-system
+spec:
+  interval: 24h
+  url: https://charts.jenkins.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: jenkins
+  namespace: jenkins-system
+spec:
+  chart:
+    spec:
+      chart: jenkins
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: jenkins
+      version: "5.1.26"
+  interval: 24h
+  releaseName: jenkins
+  timeout: 15m
+  values:
+    persistence:
+      storageClass: gp2
+      size: "1Gi"
