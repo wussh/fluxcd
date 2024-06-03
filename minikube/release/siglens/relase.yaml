@@ -26,7 +26,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: siglens
-      version: 0.1.2
+      version: 0.1.1
   interval: 24h
   releaseName: siglens
   timeout: 15m
