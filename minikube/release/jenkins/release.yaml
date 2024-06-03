@@ -30,3 +30,8 @@ spec:
   interval: 24h
   releaseName: jenkins
   timeout: 15m
+  values:
+    persistence:
+      enabled: true
+      accessMode: "ReadWriteOnce"
+      size: "1Gi"
