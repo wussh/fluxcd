@@ -20,7 +20,7 @@ metadata:
   name: siglens-chart
   namespace: siglens
 spec:
-  chart: charts/siglens
+  chart: ./charts/siglens
   sourceRef:
     kind: GitRepository
     name: siglens-git-repo
@@ -34,10 +34,10 @@ metadata:
 spec:
   chart:
     spec:
-      chart: siglens-chart
+      chart: siglens
       sourceRef:
-        kind: GitRepository
-        name: siglens-git-repo
+        kind: HelmChart
+        name: siglens-chart
   interval: 24h
   releaseName: siglens
   timeout: 15m
