@@ -6,7 +6,7 @@ metadata:
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: siglens
+  name: siglens-git-repo
   namespace: siglens
 spec:
   interval: 1m
@@ -16,7 +16,7 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmChart
 metadata:
-  name: siglens
+  name: siglens-chart
   namespace: siglens
 spec:
   chart: ./charts/siglens
@@ -29,15 +29,15 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: siglens
+  name: siglens-release
   namespace: siglens
 spec:
   chart:
     spec:
-      chart: siglenss
+      chart: siglens-chart
       sourceRef:
-        kind: GitRepository
-        name: siglens
+        kind: HelmChart
+        name: siglens-chart
         namespace: siglens
   interval: 24h
   releaseName: siglens
