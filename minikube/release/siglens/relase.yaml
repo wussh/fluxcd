@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: siglens
-
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
@@ -11,7 +10,7 @@ metadata:
   namespace: siglens
 spec:
   interval: 24h
-  url: https://siglens.github.io/charts
+  url: https://github.com/wussh/siglens-charts
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
@@ -26,7 +25,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: siglens
-      version: 0.1.0
+      version: 0.1.4
   interval: 24h
   releaseName: siglens
   timeout: 15m
