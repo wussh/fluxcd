@@ -27,7 +27,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: siglens/siglens-charts
+      chart: charts/siglens
       sourceRef:
         kind: GitRepository
         name: siglens-git-repo
