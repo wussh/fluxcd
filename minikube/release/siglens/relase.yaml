@@ -24,7 +24,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: siglens-git-repo
-    namespace: siglens
   interval: 1m
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
@@ -35,11 +34,10 @@ metadata:
 spec:
   chart:
     spec:
-      chart: siglens
+      chart: siglens-chart
       sourceRef:
         kind: GitRepository
         name: siglens-git-repo
-        namespace: siglens
   interval: 24h
   releaseName: siglens
   timeout: 15m
