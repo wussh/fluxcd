@@ -30,7 +30,7 @@ spec:
       chart: siglens/siglens-charts
       sourceRef:
         kind: GitRepository
-        name: siglens-chart
+        name: siglens-git-repo
   interval: 24h
   releaseName: siglens
   timeout: 15m
