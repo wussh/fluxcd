@@ -13,18 +13,11 @@ spec:
   url: https://github.com/wussh/siglens-charts.git
   ref:
     branch: main
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmChart
-metadata:
-  name: siglens-chart
-  namespace: siglens
-spec:
-  chart: ./charts/siglens
-  sourceRef:
-    kind: GitRepository
-    name: siglens-git-repo
-  interval: 1m
+  ignore: |-
+    # exclude all
+    /*
+    # include charts directory
+    !/charts/siglens/
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
@@ -34,9 +27,9 @@ metadata:
 spec:
   chart:
     spec:
-      chart: siglens
+      chart: siglens/siglens-charts
       sourceRef:
-        kind: HelmChart
+        kind: GitRepository
         name: siglens-chart
   interval: 24h
   releaseName: siglens
