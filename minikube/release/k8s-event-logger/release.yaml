@@ -30,10 +30,9 @@ spec:
   releaseName: k8s-event-logger
   timeout: 15m
   values:
-    image:
-    containerName: app
+  containerName: k8s-event-logger
+  image:
     repository: maxrocketinternet/k8s-event-logger
-    tag: "2.2"
     pullPolicy: IfNotPresent
     resources:
       requests:
