@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hello-minikube
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-minikube
+  namespace: hello-minikube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-minikube
+  template:
+    metadata:
+      labels:
+        app: hello-minikube
+    spec:
+      containers:
+      - name: hello-minikube
+        image: kicbase/echo-server:1.0
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-minikube
+  namespace: hello-minikube
+spec:
+  type: NodePort
+  selector:
+    app: hello-minikube
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 30000
